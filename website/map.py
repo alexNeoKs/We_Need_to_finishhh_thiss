@@ -52,6 +52,8 @@ if os.path.isfile('dataset_of_postal'):
     infile = open(filename,'rb')
     new_dict_data_all = pickle.load(infile)
     infile.close()
+    
+    
 else:
     print ("File not exist")
 
@@ -104,19 +106,24 @@ def read_map():
     #To pass back into the html Side
     data = {'startx': 1.43589365, 'starty': 103.8007271}
 
+
     if request.method == 'POST':
         print("executing the POST....")
+
 
         #Process User INput
         starting_location = request.form.get('myLocation')
         ending_location = request.form.get('mydestination')
 
+
         #Clean up the userInput 
         starting_location = starting_location.strip('\r\n      ')
         ending_location = ending_location.strip('\r\n      ')
 
+
         starting_location= starting_location.upper()
         ending_location = ending_location.upper()
+
 
         #Print the user input into the terminal
         print(starting_location)
@@ -128,20 +135,15 @@ def read_map():
             return render_template("map_page.html", data=data)
         
         else:
-            #print("User Location Found")
-            # Print the lat and long of the selection
-            # print(Check_Valid_User_Input(starting_location))
-            # print(Check_Valid_User_Input(ending_location))
-            
-            # print(Return_User_to_Node_Matching(Check_Valid_User_Input(starting_location), nodesArray))
-            # print(Return_User_to_Node_Matching(Check_Valid_User_Input(ending_location), nodesArray))
-            
             Closest_Node_to_Pickup = Return_User_to_Node_Matching(Check_Valid_User_Input(starting_location), nodesArray)
             Closest_Node_to_Dropoff = Return_User_to_Node_Matching(Check_Valid_User_Input(ending_location), nodesArray)
             
             print(Closest_Node_to_Pickup)
             print(Closest_Node_to_Dropoff)
             
+            #We need insert driver to passenger matching algo here
+            Closest_Node_to_Pickup =101
+            Closest_Node_to_Dropoff = 99
             
             source_location_x = nodesArray[Closest_Node_to_Pickup].latitude
             source_location_y = nodesArray[Closest_Node_to_Pickup].longitude
@@ -149,17 +151,21 @@ def read_map():
             end_location_x = nodesArray[Closest_Node_to_Dropoff].latitude
             end_location_y = nodesArray[Closest_Node_to_Dropoff].longitude
             
-            loc = distanceGraph.dijkstraAlgoGetPath(Closest_Node_to_Pickup, Closest_Node_to_Dropoff)[0]
-            print("PATH")
-            print(loc)
+            
+            #We need our comparison for pathing here
+            location_path = distanceGraph.dijkstraAlgoGetPath(Closest_Node_to_Pickup, Closest_Node_to_Dropoff)[0]
+            location_path_speed = speedGraph.dijkstraAlgoGetPath(Closest_Node_to_Pickup, Closest_Node_to_Dropoff)[0]
+            
+            print(location_path)
+            print(location_path_speed)
             
             data.update({
                 'startx': source_location_x, 'starty': source_location_y, 'endx': end_location_x, 'endy':end_location_y
             })
 
-            print(data)
-            
-            return render_template("map_page.html", data=data, lineCoord=loc)
+            return render_template("map_page.html", data=data, lineCoord=location_path)
 
 
     return render_template("map_page.html", data=data)
+
+

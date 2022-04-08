@@ -147,7 +147,9 @@
 
       //let polyline3 = L.polyline(linesData_3, {className: 'animate'}).addTo(mymap);
 
-      let polyline1 = L.polyline(linesData, {className: 'animate'}).addTo(mymap);
+      let polyline1 = L.polyline(linesData,{className: 'animate'}).setStyle({
+        color: 'black'
+    }).addTo(mymap);
     }
 
 
