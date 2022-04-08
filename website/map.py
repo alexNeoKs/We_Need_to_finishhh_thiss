@@ -138,12 +138,10 @@ def read_map():
             
             Closest_Node_to_Pickup = Return_User_to_Node_Matching(Check_Valid_User_Input(starting_location), nodesArray)
             Closest_Node_to_Dropoff = Return_User_to_Node_Matching(Check_Valid_User_Input(ending_location), nodesArray)
-
-            print("Closest_Node_to_Pickup")
+            
             print(Closest_Node_to_Pickup)
-
-            print("Closest_Node_to_Dropoff")
             print(Closest_Node_to_Dropoff)
+            
             
             source_location_x = nodesArray[Closest_Node_to_Pickup].latitude
             source_location_y = nodesArray[Closest_Node_to_Pickup].longitude
