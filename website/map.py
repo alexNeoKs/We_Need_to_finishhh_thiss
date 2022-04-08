@@ -37,7 +37,14 @@ def OneMapAPI_data_retreive(address):
 new_dict_data_all = null
 datastore = {}
 nodesArray = getNodesArray()
+
+#True if using speed, else if using distance then false
 distanceGraph = Graph(nodesArray)
+distanceGraph.linkAllNodes(False)
+
+speedGraph = Graph(nodesArray)
+speedGraph.linkAllNodes(True)
+
 filename = 'dataset_of_postal'
 
 if os.path.isfile('dataset_of_postal'):
@@ -79,7 +86,7 @@ def Return_User_to_Node_Matching(userinput, nodesArray):
     user_location = (float(userinput[0]) , float(userinput[1]))
     print(user_location)
         
-    for i in range(1,189):
+    for i in range(0,len(nodesArray)):
         location = (nodesArray[i].latitude, nodesArray[i].longitude)
         
         distance = haversine(user_location, location, unit=Unit.METERS)
@@ -89,10 +96,6 @@ def Return_User_to_Node_Matching(userinput, nodesArray):
             
     return minimum
     
-#Calls and Defines the Node Array for path calculation
-nodesArray = getNodesArray()
-
-
 
 @map.route('/', methods=['GET', 'POST'])  # add url here
 def read_map():
@@ -111,6 +114,7 @@ def read_map():
         #Clean up the userInput 
         starting_location = starting_location.strip('\r\n      ')
         ending_location = ending_location.strip('\r\n      ')
+
         starting_location= starting_location.upper()
         ending_location = ending_location.upper()
 
@@ -124,16 +128,22 @@ def read_map():
             return render_template("map_page.html", data=data)
         
         else:
-            print("User Location Found")
-            #Print the lat and long of the selection
-            print(Check_Valid_User_Input(starting_location))
-            print(Check_Valid_User_Input(ending_location))
+            #print("User Location Found")
+            # Print the lat and long of the selection
+            # print(Check_Valid_User_Input(starting_location))
+            # print(Check_Valid_User_Input(ending_location))
             
-            print(Return_User_to_Node_Matching(Check_Valid_User_Input(starting_location), nodesArray))
-            print(Return_User_to_Node_Matching(Check_Valid_User_Input(ending_location), nodesArray))
+            # print(Return_User_to_Node_Matching(Check_Valid_User_Input(starting_location), nodesArray))
+            # print(Return_User_to_Node_Matching(Check_Valid_User_Input(ending_location), nodesArray))
             
             Closest_Node_to_Pickup = Return_User_to_Node_Matching(Check_Valid_User_Input(starting_location), nodesArray)
-            Closest_Node_to_Dropoff = Return_User_to_Node_Matching(Check_Valid_User_Input(starting_location), nodesArray)
+            Closest_Node_to_Dropoff = Return_User_to_Node_Matching(Check_Valid_User_Input(ending_location), nodesArray)
+
+            print("Closest_Node_to_Pickup")
+            print(Closest_Node_to_Pickup)
+
+            print("Closest_Node_to_Dropoff")
+            print(Closest_Node_to_Dropoff)
             
             source_location_x = nodesArray[Closest_Node_to_Pickup].latitude
             source_location_y = nodesArray[Closest_Node_to_Pickup].longitude
@@ -141,14 +151,12 @@ def read_map():
             end_location_x = nodesArray[Closest_Node_to_Dropoff].latitude
             end_location_y = nodesArray[Closest_Node_to_Dropoff].longitude
             
-            
             loc = distanceGraph.dijkstraAlgoGetPath(Closest_Node_to_Pickup, Closest_Node_to_Dropoff)[0]
+            print("PATH")
             print(loc)
             
             data.update({
-                
                 'startx': source_location_x, 'starty': source_location_y, 'endx': end_location_x, 'endy':end_location_y
-            
             })
 
             print(data)
