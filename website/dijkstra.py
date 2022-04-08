@@ -33,6 +33,7 @@ class Graph:
                 self.addEdge(node1, node2, None)
         else:
             for node1, node2, speed in zip(list(df['node1']), list(df['node2']), list(df['speed'])):
+                print(speed)
                 self.addEdge(node1, node2, speed)
 
     def dijkstraAlgoGetPath(self, sourceNode, destinationNode):
@@ -91,8 +92,12 @@ class Graph:
         #pathing coordinates, array of (lat, long) from start to end destination
         pathingCoords = []
 
+        #to know the node path
+        myNodesNum = []
+
         for i in path:
             pathingCoords.append([self.nodesArray[i].latitude, self.nodesArray[i].longitude])
+            myNodesNum.append(i)
 
         # cost here refers to either time or distance depending on self.graph
         # two types of graph can be created, nodes with speed or nodes with distance graph
@@ -100,7 +105,7 @@ class Graph:
         # returned value time is in seconds
         totalCost = distanceOrTime[destinationNode]
 
-        return pathingCoords, totalCost
+        return pathingCoords, totalCost, myNodesNum
 
     def print(self):
         print(self.graph)

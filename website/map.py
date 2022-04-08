@@ -38,13 +38,6 @@ new_dict_data_all = null
 datastore = {}
 nodesArray = getNodesArray()
 
-#True if using speed, else if using distance then false
-distanceGraph = Graph(nodesArray)
-distanceGraph.linkAllNodes(False)
-
-speedGraph = Graph(nodesArray)
-speedGraph.linkAllNodes(True)
-
 filename = 'dataset_of_postal'
 
 if os.path.isfile('dataset_of_postal'):
@@ -101,6 +94,12 @@ def Return_User_to_Node_Matching(userinput, nodesArray):
 
 @map.route('/', methods=['GET', 'POST'])  # add url here
 def read_map():
+    #True if using speed, else if using distance then false
+    distanceGraph = Graph(nodesArray)
+    distanceGraph.linkAllNodes(False)
+
+    speedGraph = Graph(nodesArray)
+    speedGraph.linkAllNodes(True)
     
     
     #To pass back into the html Side
@@ -137,13 +136,12 @@ def read_map():
         else:
             Closest_Node_to_Pickup = Return_User_to_Node_Matching(Check_Valid_User_Input(starting_location), nodesArray)
             Closest_Node_to_Dropoff = Return_User_to_Node_Matching(Check_Valid_User_Input(ending_location), nodesArray)
-            
+
+            print("Closest_Node_to_Pickup")
             print(Closest_Node_to_Pickup)
+
+            print("Closest_Node_to_Dropoff")
             print(Closest_Node_to_Dropoff)
-            
-            #We need insert driver to passenger matching algo here
-            Closest_Node_to_Pickup =101
-            Closest_Node_to_Dropoff = 99
             
             source_location_x = nodesArray[Closest_Node_to_Pickup].latitude
             source_location_y = nodesArray[Closest_Node_to_Pickup].longitude
@@ -151,21 +149,26 @@ def read_map():
             end_location_x = nodesArray[Closest_Node_to_Dropoff].latitude
             end_location_y = nodesArray[Closest_Node_to_Dropoff].longitude
             
-            
             #We need our comparison for pathing here
             location_path = distanceGraph.dijkstraAlgoGetPath(Closest_Node_to_Pickup, Closest_Node_to_Dropoff)[0]
-            location_path_speed = speedGraph.dijkstraAlgoGetPath(Closest_Node_to_Pickup, Closest_Node_to_Dropoff)[0]
-            
+            nodesNum = distanceGraph.dijkstraAlgoGetPath(Closest_Node_to_Pickup, Closest_Node_to_Dropoff)[2]
+
+            print("DISTANCE PATH")
             print(location_path)
-            print(location_path_speed)
+            print(nodesNum)
+
+            location_path_speed = speedGraph.dijkstraAlgoGetPath(Closest_Node_to_Pickup, Closest_Node_to_Dropoff)[0]
+            nodesNo = speedGraph.dijkstraAlgoGetPath(Closest_Node_to_Pickup, Closest_Node_to_Dropoff)[2]           
             
+            print("SPEEDY PATH")
+            print(location_path_speed)
+            print(nodesNo)
+
             data.update({
                 'startx': source_location_x, 'starty': source_location_y, 'endx': end_location_x, 'endy':end_location_y
             })
 
+            print(data)
+            
             return render_template("map_page.html", data=data, lineCoord=location_path)
-
-
     return render_template("map_page.html", data=data)
-
-
